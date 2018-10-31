@@ -17,7 +17,7 @@ public class Node
         this.port = port;
     }
 
-    protected String read(String inputParameter)
+    protected Node read(String inputParameter)
     {
         String line = "";
         String idInLine = "";
@@ -32,32 +32,16 @@ public class Node
                 idInLine = line.substring(0, line.indexOf(" "));
             }
             ipAddress = line.substring(line.indexOf(" "));
-            System.out.println("Ergebnis:" + idInLine + ipAddress);
-
         } catch (FileNotFoundException fnfe) {
 
         }
         catch (IOException ioe){
 
         }
-        return ipAddress;
-    }
-
-    protected void setIpAddress(String ipAddress)
-    {
-        String ip = ipAddress.substring(0, ipAddress.indexOf(":"));
-        if (ipAddress.contains(":")) {
-            String[] parts = ipAddress.split(":");
-            this.ipAddress = parts[0];
-            this.port = Integer.parseInt(parts[1]);
-        } else {
-            throw new IllegalArgumentException("String " + ipAddress + " does not contain :");
-        }
-    }
-
-    protected void setId(Integer id)
-    {
-        this.id = id;
+        String[] parts = ipAddress.split(":");
+        Node node = new Node(Integer.parseInt(idInLine), parts[0], Integer.parseInt(parts[1]));
+        System.out.println(node.id + node.ipAddress + node.port);
+        return node;
     }
 
     protected int getPort()
@@ -76,10 +60,4 @@ public class Node
 
         }
     }
-
-    protected void getNeighborIds()
-    {
-
-    }
-
 }

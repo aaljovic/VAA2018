@@ -4,12 +4,13 @@ public class Start
     {
         String ipAddress = "";
 
-        System.out.println("Your input" + args[0]);
+        System.out.println("Your input: " + args[0]);
 
         Node node = new Node(0, "localhost",1001);
-        ipAddress = node.read(args[0]);
-        node.setId(Integer.parseInt(args[0]));
-        node.setIpAddress(ipAddress);
+        node = node.read(args[0]);
         node.listenToPort(node.getPort());
+        node = node.read(args[1]);
+        node = node.read(args[2]);
+        node = node.read(args[3]);
     }
 }
