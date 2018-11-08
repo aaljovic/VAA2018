@@ -2,7 +2,7 @@ public class Start
 {
     public static void main(String[] args)
     {
-        Node node = new Node(0, "localhost",1001);
+        Node node = new Node(0, "localhost",1001, null);
         node.readAll();
         Node.readAll();
         /*
