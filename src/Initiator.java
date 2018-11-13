@@ -43,6 +43,6 @@ public class Initiator
         String id = sc.next();
         System.out.println("Wie lautet die Nachricht?");
         String message = sc.next();
-        Node.sendMessage(id, message);
+        Node.sendMessage(Integer.parseInt(id), message);
     }
 }

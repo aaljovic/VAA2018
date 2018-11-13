@@ -19,6 +19,8 @@ public class Node
         {
             Node node = read(args[0]);
             node.setRandomNeighbours();
+            System.out.println(node.neighbourNodes.length);
+            node.showNeighbours();
             while(true)
             {
                 node.listenToPort(node.getPort());
@@ -28,8 +30,6 @@ public class Node
                     firstTime = false;
                 }
             }
-            node.listenToPort(node.getPort());
-            node.setRandomNeighbours(node);
         }
         else
         {
@@ -57,9 +57,9 @@ public class Node
     private int id;
     private String ipAddress;
     private int port;
-    private String[] neighbourNodes;
+    private int[] neighbourNodes;
 
-    public Node(int id, String ipAddress, int port, String[] neighbourNodes)
+    public Node(int id, String ipAddress, int port, int[] neighbourNodes)
     {
         this.id = id;
         this.ipAddress = ipAddress;
@@ -168,11 +168,11 @@ public class Node
         return server;
     }
 
-    protected static void sendMessage(String id, String message)
+    protected static void sendMessage(int id, String message)
     {
         try
         {
-            Socket clientSocket = new Socket(InetAddress.getLocalHost(), read(id).getPort());
+            Socket clientSocket = new Socket(InetAddress.getLocalHost(), read(Integer.toString(id)).getPort());
 
             OutputStream os = clientSocket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
@@ -198,17 +198,18 @@ public class Node
     {
         for (int i= 0; i<this.neighbourNodes.length; i++)
         {
+            System.out.println(this.neighbourNodes[i]);
             sendMessage(this.neighbourNodes[i], Integer.toString(this.id));
         }
 
     }
 
-    protected String[] setRandomNeighbours()
+    protected void setRandomNeighbours()
     {
         String line = "";
         String idInLine = "";
-        String[] idAllLines = new String[LENGTH_NODE_ARRAY];
-        String[] randomNeighbours = new String[3];
+        int[] idAllLines = new int[LENGTH_NODE_ARRAY];
+        int[] randomNeighbours = new int[3];
         int numberOfId = 0;
         int randomIndex = 0;
         Random generator = new Random();
@@ -221,7 +222,7 @@ public class Node
             while ((line = br.readLine()) != null)
             {
                 idInLine = line.substring(0, line.indexOf(" "));
-                idAllLines[numberOfId] = idInLine;
+                idAllLines[numberOfId] = Integer.parseInt(idInLine);
                 numberOfId++;
             }
         }
@@ -233,24 +234,35 @@ public class Node
         {
             System.err.println("Fehler" + ioe);
         }
-        String[] existingIdArray = Arrays.copyOfRange(idAllLines, 0, numberOfId);
+        int[] existingIdArray = Arrays.copyOfRange(idAllLines, 0, numberOfId);
         assignedNodes.add(this.id);
+        System.out.println("THIS ID: " + this.id);
         for (int j=0; j<3; j++)
         {
+            // A random number between 1 and the length of the Array is saved into the variable randomIndex
             randomIndex = generator.nextInt(existingIdArray.length);
 
-            if (assignedNodes.contains(randomIndex))
+            if (assignedNodes.contains(existingIdArray[randomIndex]))
             {
+                System.out.println("STOP");
                 j--;
             }
             else
             {
                 randomNeighbours[j] = existingIdArray[randomIndex];
-                System.out.println(randomNeighbours[j]);
-                assignedNodes.add(randomIndex);
+                assignedNodes.add(existingIdArray[randomIndex]);
             }
         }
-        return randomNeighbours;
+        this.neighbourNodes = randomNeighbours;
+    }
+
+    protected void showNeighbours()
+    {
+        System.out.println("Anzahl der Nachbarn" + this.neighbourNodes.length);
+        for (int i=0; i<this.neighbourNodes.length; i++)
+        {
+            System.out.println(this.neighbourNodes[i]);
+        }
     }
 
 }
