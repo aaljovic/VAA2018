@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -141,9 +142,12 @@ public class Node
             server = new ServerSocket(port);
             System.out.println("Server hört zu...");
             Socket socket = server.accept();
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.print("hi");
-            out.flush();
+
+            InputStream is = socket.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String message = br.readLine();
+            System.out.println(message);
         }
         catch(IOException ioe)
         {
@@ -156,11 +160,17 @@ public class Node
     {
         try
         {
-            System.out.println(read(id).getPort());
             Socket clientSocket = new Socket(InetAddress.getLocalHost(), read(id).getPort());
-            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            printWriter.write(message);
-            printWriter.flush();
+
+            OutputStream os = clientSocket.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(os);
+            BufferedWriter bw = new BufferedWriter(osw);
+            String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
+            message = timeStamp + "\t" + message;
+            bw.write(message);
+            bw.flush();
+            clientSocket.close();
+
         }
         catch(UnknownHostException uhe)
         {
@@ -170,6 +180,15 @@ public class Node
         {
             System.err.println("Fehler" + ioe);
         }
+    }
+
+    protected void sendIdToNeighbours()
+    {
+        for (int i= 0; i<this.neighbourNodes.length; i++)
+        {
+
+        }
+
     }
 
     protected String[] setRandomNeighbours(Node node)
