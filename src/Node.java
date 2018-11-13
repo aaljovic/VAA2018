@@ -14,17 +14,25 @@ public class Node
 
     public static void main(String[] args)
     {
+        boolean firstTime = true;
         if (args.length == 1)
         {
             Node node = read(args[0]);
-            node.listenToPort(node.getPort());
-            node.setRandomNeighbours(node);
+            node.setRandomNeighbours();
+            while(true)
+            {
+                node.listenToPort(node.getPort());
+                if (firstTime == true)
+                {
+                    node.sendIdToNeighbours();
+                    firstTime = false;
+                }
+            }
         }
         else
         {
             System.out.println("Ungültige Eingabe." + "\n" + "Starten Sie das Programm neu mit der gewünschten Knoten ID.");
         }
-
 
         /*
         Node.readAll();
@@ -59,16 +67,17 @@ public class Node
     protected static Node read(String inputParameter)
     {
         String line = "";
-        String idInLine = "";
+        String idInLine = "LEER";
         String ipAddress = "";
 
         try {
             FileReader fr = new FileReader("D:\\GitHub Projekte\\VAA2018\\inputFiles\\inputTextFile");
             BufferedReader br = new BufferedReader(fr);
 
-            while (((line = br.readLine()) != null) && (!idInLine.equals(inputParameter)))
+            while ((!idInLine.equals(inputParameter)) && ((line = br.readLine()) != null))
             {
                 idInLine = line.substring(0, line.indexOf(" "));
+                System.out.println(idInLine);
             }
             ipAddress = line.substring(line.indexOf(" "));
         }
@@ -186,12 +195,12 @@ public class Node
     {
         for (int i= 0; i<this.neighbourNodes.length; i++)
         {
-
+            sendMessage(this.neighbourNodes[i], Integer.toString(this.id));
         }
 
     }
 
-    protected String[] setRandomNeighbours(Node node)
+    protected String[] setRandomNeighbours()
     {
         String line = "";
         String idInLine = "";
@@ -222,7 +231,7 @@ public class Node
             System.err.println("Fehler" + ioe);
         }
         String[] existingIdArray = Arrays.copyOfRange(idAllLines, 0, numberOfId);
-        assignedNodes.add(node.id);
+        assignedNodes.add(this.id);
         for (int j=0; j<3; j++)
         {
             randomIndex = generator.nextInt(existingIdArray.length);
