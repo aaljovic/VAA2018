@@ -1,5 +1,3 @@
-import com.sun.security.ntlm.Server;
-
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -11,6 +9,8 @@ import java.util.*;
 
 public class Node
 {
+
+    private static final String FILE_NAME = "D:\\GitHubProjekte\\VAA2018\\inputFiles\\inputTextFile";
 
     public static void main(String[] args)
     {
@@ -28,11 +28,14 @@ public class Node
                     firstTime = false;
                 }
             }
+            node.listenToPort(node.getPort());
+            node.setRandomNeighbours(node);
         }
         else
         {
             System.out.println("Ungültige Eingabe." + "\n" + "Starten Sie das Programm neu mit der gewünschten Knoten ID.");
         }
+
 
         /*
         Node.readAll();
@@ -71,13 +74,13 @@ public class Node
         String ipAddress = "";
 
         try {
-            FileReader fr = new FileReader("D:\\GitHub Projekte\\VAA2018\\inputFiles\\inputTextFile");
+            FileReader fr = new FileReader(FILE_NAME);
             BufferedReader br = new BufferedReader(fr);
 
+            //Search in the File for the matching line (ID) with the user's input.
             while ((!idInLine.equals(inputParameter)) && ((line = br.readLine()) != null))
             {
                 idInLine = line.substring(0, line.indexOf(" "));
-                System.out.println(idInLine);
             }
             ipAddress = line.substring(line.indexOf(" "));
         }
@@ -108,7 +111,7 @@ public class Node
         int i = 0;
 
         try {
-            FileReader fr = new FileReader("D:\\GitHub Projekte\\VAA2018\\inputFiles\\inputTextFile");
+            FileReader fr = new FileReader(FILE_NAME);
             BufferedReader br = new BufferedReader(fr);
 
             while ((line = br.readLine()) != null)
@@ -212,7 +215,7 @@ public class Node
         List<Integer> assignedNodes = new ArrayList<>();
 
         try {
-            FileReader fr = new FileReader("D:\\GitHub Projekte\\VAA2018\\inputFiles\\inputTextFile");
+            FileReader fr = new FileReader(FILE_NAME);
             BufferedReader br = new BufferedReader(fr);
 
             while ((line = br.readLine()) != null)
