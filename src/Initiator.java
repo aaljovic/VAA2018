@@ -10,21 +10,28 @@ public class Initiator
 
     public static void main(String[] args)
     {
-        System.out.print(SELECTION_MENU);
-        System.out.println("Treffen Sie eine Eingabe");
-        Scanner sc = new Scanner(System.in);
-
-        String input = sc.next();
-        System.out.println("Sie haben " + input + " eingegeben.");
-        switch(input)
+        while (true)
         {
-            case "1": sendMessageTo();
-                break;
-            case "2": closeNode();
-                break;
-            case "3": closeAllNodes();
-                break;
-            default: System.out.println("Eingabe unzutreffend");
+            System.out.print(SELECTION_MENU);
+            System.out.println("Treffen Sie eine Eingabe");
+            Scanner sc = new Scanner(System.in);
+
+            String input = sc.next();
+            System.out.println("Sie haben " + input + " eingegeben.");
+            switch (input)
+            {
+                case "1":
+                    sendMessageTo();
+                    break;
+                case "2":
+                    closeNode();
+                    break;
+                case "3":
+                    closeAllNodes();
+                    break;
+                default:
+                    System.out.println("Eingabe unzutreffend");
+            }
         }
     }
 
