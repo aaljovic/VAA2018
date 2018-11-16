@@ -7,11 +7,9 @@ public class Initiator
         while (true)
         {
             System.out.print(Constants.SELECTION_MENU);
-            System.out.println("Treffen Sie eine Eingabe");
             Scanner sc = new Scanner(System.in);
 
             String input = sc.next();
-            System.out.println("Sie haben " + input + " eingegeben.");
             switch (input)
             {
                 case "1":
@@ -31,7 +29,7 @@ public class Initiator
 
     private static String chooseNodeId()
     {
-        System.out.println("Geben Sie die ID des Knotens an: ");
+        System.out.println(Constants.REQUEST_ID_INPUT);
         Scanner sc = new Scanner(System.in);
         String input = sc.next();
         return input;
@@ -39,7 +37,7 @@ public class Initiator
 
     private static void sendMessageTo()
     {
-        System.out.println("An welche ID soll die Nachricht gesendet werden?");
+        System.out.println(Constants.REQUEST_ID_INPUT);
         Scanner sc = new Scanner(System.in);
         String id = sc.next();
         System.out.println("Wie lautet die Nachricht?");
@@ -49,7 +47,7 @@ public class Initiator
 
     private static void closeNode()
     {
-        System.out.println("Welcher knoten soll beendet werden?");
+        System.out.println(Constants.REQUEST_ID_INPUT);
         Scanner sc = new Scanner(System.in);
         String id = sc.next();
         Node.sendMessage(Integer.parseInt(id), Constants.STOP_MESSAGE);

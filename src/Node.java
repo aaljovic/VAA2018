@@ -7,49 +7,23 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
+
+
 public class Node
 {
-
-    private static final String FILE_NAME = "D:\\GitHubProjekte\\VAA2018\\inputFiles\\inputTextFile";
-
     public static void main(String[] args)
     {
-        boolean firstTime = true;
         if (args.length == 1)
         {
             Node node = read(args[0]);
             node.setRandomNeighbours();
-            System.out.println(node.neighbourNodes.length);
             node.showNeighbours();
-            while(true)
-            {
-                node.listenToPort(node.getPort());
-                if (firstTime == true)
-                {
-                    node.sendIdToNeighbours();
-                    firstTime = false;
-                }
-            }
+            node.listenToPort(node.getPort());
         }
         else
         {
             System.out.println("Ungültige Eingabe." + "\n" + "Starten Sie das Programm neu mit der gewünschten Knoten ID.");
         }
-
-
-        /*
-        Node.readAll();
-        String ipAddress = "";
-
-        System.out.println("Your input: " + args[0]);
-
-        Node node = new Node(0, "localhost",1001);
-        node = node.read(args[0]);
-        node.listenToPort(node.getPort());
-        node = node.read(args[1]);
-        node = node.read(args[2]);
-        node = node.read(args[3]);
-        */
     }
 
     static final int LENGTH_NODE_ARRAY = 1000;
@@ -74,7 +48,7 @@ public class Node
         String ipAddress = "";
 
         try {
-            FileReader fr = new FileReader(FILE_NAME);
+            FileReader fr = new FileReader(Constants.FILE_NAME);
             BufferedReader br = new BufferedReader(fr);
 
             //Search in the File for the matching line (ID) with the user's input.
@@ -86,11 +60,11 @@ public class Node
         }
         catch (FileNotFoundException fnfe)
         {
-            System.err.println("Datei nicht gefunden" + fnfe);
+            System.err.println(Constants.FILE_NOT_FOUND_ERROR + fnfe);
         }
         catch (IOException ioe)
         {
-            System.err.println("Fehler" + ioe);
+            System.err.println(Constants.INPUT_OUTPUT_ERROR + ioe);
         }
         catch (NullPointerException npe)
         {
@@ -98,42 +72,38 @@ public class Node
         }
         String[] parts = ipAddress.split(":");
         Node node = new Node(Integer.parseInt(idInLine), parts[0], Integer.parseInt(parts[1]), null);
-        System.out.println(node.id + node.ipAddress + node.port);
+        System.out.println("----> Knoten " + node.id + node.ipAddress + ":" + node.port + " <----");
         return node;
     }
 
-    public static Node[] readAll()
+    public static int[] getAllIds()
     {
         String line = "";
         String idInLine = "";
-        String ipAddress = "";
-        Node[] nodeArray = new Node[LENGTH_NODE_ARRAY];
-        int i = 0;
+        int[] idAllLines = new int[LENGTH_NODE_ARRAY];
+        int numberOfId = 0;
 
         try {
-            FileReader fr = new FileReader(FILE_NAME);
+            FileReader fr = new FileReader(Constants.FILE_NAME);
             BufferedReader br = new BufferedReader(fr);
 
             while ((line = br.readLine()) != null)
             {
                 idInLine = line.substring(0, line.indexOf(" "));
-                ipAddress = line.substring(line.indexOf(" "));
-                String[] parts = ipAddress.split(":");
-                nodeArray[i] = new Node(Integer.parseInt(idInLine), parts[0], Integer.parseInt(parts[1]), null);
-                nodeArray[i].listenToPort(nodeArray[i].getPort());
-                System.out.println(nodeArray[i].id + nodeArray[i].ipAddress + nodeArray[i].port);
-                i++;
+                idAllLines[numberOfId] = Integer.parseInt(idInLine);
+                numberOfId++;
             }
         }
         catch (FileNotFoundException fnfe)
         {
-            System.err.println("Datei nicht gefunden" + fnfe);
+            System.err.println(Constants.FILE_NOT_FOUND_ERROR + fnfe);
         }
         catch (IOException ioe)
         {
-            System.err.println("Fehler" + ioe);
+            System.err.println(Constants.INPUT_OUTPUT_ERROR + ioe);
         }
-        return nodeArray;
+        int[] idOfAllNodes = Arrays.copyOfRange(idAllLines, 0, numberOfId);
+        return idOfAllNodes;
     }
 
     protected int getPort()
@@ -141,39 +111,67 @@ public class Node
         return this.port;
     }
 
-    protected String getIpAddress()
-    {
-        return this.ipAddress;
-    }
+    protected String getIpAddress() { return this.ipAddress; }
 
-    protected ServerSocket listenToPort(int port)
+    protected void listenToPort(int port)
     {
         ServerSocket server = null;
+        boolean firstTime = true;
+        boolean run = true;
         try
         {
             server = new ServerSocket(port);
-            System.out.println("Server hört zu...");
-            Socket socket = server.accept();
+            while (run==true)
+            {
+                System.out.println("\n" + "Server hört zu...");
+                Socket socket = server.accept();
 
-            InputStream is = socket.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String message = br.readLine();
-            System.out.println(message);
-        }
-        catch(IOException ioe)
+                InputStream is = socket.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String message = br.readLine();
+                System.out.println(message);
+                // String message includes a timestamp and the actual message. To check if the message contains the command "stop" we split it into two parts: timeStamp and actual message
+                String[] wordsOfMessage = message.split("\\s+");
+                String lastWordOfMessage = wordsOfMessage[wordsOfMessage.length-1];
+                if (lastWordOfMessage.equals(Constants.STOP_MESSAGE))
+                {
+                    if (server != null)
+                    {
+                        server.close();
+                        run = false;
+                    }
+                }
+                else if (firstTime == true)
+                {
+                    this.sendIdToNeighbours();
+                    firstTime = false;
+                }
+            }
+        } catch (IOException ioe)
         {
-            System.err.println("Fehler" + ioe);
+            System.err.println(Constants.INPUT_OUTPUT_ERROR + ioe);
+        } finally
+        {
+            try
+            {
+                if (server != null)
+                {
+                    server.close();
+                }
+            } catch (IOException ex)
+            {
+                ex.printStackTrace();
+            }
         }
-        return server;
     }
 
     protected static void sendMessage(int id, String message)
     {
         try
-        {
-            Socket clientSocket = new Socket(InetAddress.getLocalHost(), read(Integer.toString(id)).getPort());
-
+        {   // @TODO Maybe InetAddress.getLocalHost() instead of "127.0.0.1", or at least Constan localhost
+            // @TODO Check is the IpAdress here hard coded or does it depend on the input file?
+            Socket clientSocket = new Socket("127.0.0.1", read(Integer.toString(id)).getPort());
             OutputStream os = clientSocket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
             BufferedWriter bw = new BufferedWriter(osw);
@@ -182,7 +180,6 @@ public class Node
             bw.write(message);
             bw.flush();
             clientSocket.close();
-
         }
         catch(UnknownHostException uhe)
         {
@@ -190,7 +187,7 @@ public class Node
         }
         catch (IOException ioe)
         {
-            System.err.println("Fehler" + ioe);
+            System.err.println(Constants.INPUT_OUTPUT_ERROR + ioe);
         }
     }
 
@@ -198,8 +195,8 @@ public class Node
     {
         for (int i= 0; i<this.neighbourNodes.length; i++)
         {
-            System.out.println(this.neighbourNodes[i]);
-            sendMessage(this.neighbourNodes[i], Integer.toString(this.id));
+            System.out.println("Nachricht an " + this.neighbourNodes[i]);
+            this.sendMessage(this.neighbourNodes[i], Integer.toString(this.id));
         }
 
     }
@@ -216,7 +213,7 @@ public class Node
         List<Integer> assignedNodes = new ArrayList<>();
 
         try {
-            FileReader fr = new FileReader(FILE_NAME);
+            FileReader fr = new FileReader(Constants.FILE_NAME);
             BufferedReader br = new BufferedReader(fr);
 
             while ((line = br.readLine()) != null)
@@ -228,15 +225,14 @@ public class Node
         }
         catch (FileNotFoundException fnfe)
         {
-            System.err.println("Datei nicht gefunden" + fnfe);
+            System.err.println(Constants.FILE_NOT_FOUND_ERROR + fnfe);
         }
         catch (IOException ioe)
         {
-            System.err.println("Fehler" + ioe);
+            System.err.println(Constants.INPUT_OUTPUT_ERROR + ioe);
         }
         int[] existingIdArray = Arrays.copyOfRange(idAllLines, 0, numberOfId);
         assignedNodes.add(this.id);
-        System.out.println("THIS ID: " + this.id);
         for (int j=0; j<3; j++)
         {
             // A random number between 1 and the length of the Array is saved into the variable randomIndex
@@ -244,7 +240,6 @@ public class Node
 
             if (assignedNodes.contains(existingIdArray[randomIndex]))
             {
-                System.out.println("STOP");
                 j--;
             }
             else
@@ -258,10 +253,9 @@ public class Node
 
     protected void showNeighbours()
     {
-        System.out.println("Anzahl der Nachbarn" + this.neighbourNodes.length);
         for (int i=0; i<this.neighbourNodes.length; i++)
         {
-            System.out.println(this.neighbourNodes[i]);
+            System.out.println("Nachbar " + this.neighbourNodes[i]);
         }
     }
 
