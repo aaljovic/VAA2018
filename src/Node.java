@@ -1,8 +1,5 @@
 import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -139,6 +136,7 @@ public class Node
                     if (server != null)
                     {
                         server.close();
+                        socket.close();
                         run = false;
                     }
                 }
@@ -170,7 +168,6 @@ public class Node
     {
         try
         {   // @TODO Maybe InetAddress.getLocalHost() instead of "127.0.0.1", or at least Constan localhost
-            // @TODO Check is the IpAdress here hard coded or does it depend on the input file?
             Socket clientSocket = new Socket("127.0.0.1", read(Integer.toString(id)).getPort());
             OutputStream os = clientSocket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
@@ -184,6 +181,10 @@ public class Node
         catch(UnknownHostException uhe)
         {
             System.err.println("Host ist unbekannt: " + uhe);
+        }
+        catch (SocketException sc)
+        {
+            System.err.println("Knoten ist bereits geschlossen: " + sc);
         }
         catch (IOException ioe)
         {
