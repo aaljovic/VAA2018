@@ -6,6 +6,7 @@ public final class Constants
     }
 
     // Source Code Variables
+    static final int LENGTH_NODE_ARRAY = 1000;
     public static final String STOP_MESSAGE = "stop";
     public static final String FILE_NAME = "D:\\GitHubProjekte\\VAA2018\\inputFiles\\inputTextFile";
 

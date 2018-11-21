@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-
-
 public class Node
 {
     public static void main(String[] args)
@@ -22,8 +20,6 @@ public class Node
             System.out.println("Ungültige Eingabe." + "\n" + "Starten Sie das Programm neu mit der gewünschten Knoten ID.");
         }
     }
-
-    static final int LENGTH_NODE_ARRAY = 1000;
 
     private int id;
     private String ipAddress;
@@ -77,7 +73,7 @@ public class Node
     {
         String line = "";
         String idInLine = "";
-        int[] idAllLines = new int[LENGTH_NODE_ARRAY];
+        int[] idAllLines = new int[Constants.LENGTH_NODE_ARRAY];
         int numberOfId = 0;
 
         try {
@@ -206,7 +202,7 @@ public class Node
     {
         String line = "";
         String idInLine = "";
-        int[] idAllLines = new int[LENGTH_NODE_ARRAY];
+        int[] idAllLines = new int[Constants.LENGTH_NODE_ARRAY];
         int[] randomNeighbours = new int[3];
         int numberOfId = 0;
         int randomIndex = 0;
