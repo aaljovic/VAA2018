@@ -9,7 +9,7 @@ javac Initiator.java
 
 # Reads every line of the file inputTextFile.txt
 # For every Node ID (written in each line) the java programm Node is started with the corresponding ID as parameter
-for /f %%i in (D:\GitHubProjekte\VAA2018\inputFiles\inputTextFile) do (
+for /f %%i in (D:\GitHubProjekte\VAA_WS2018_U1_A1\inputFiles\inputTextFile) do (
 start cmd /K java Node %%i
 )
 
