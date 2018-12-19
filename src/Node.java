@@ -168,7 +168,7 @@ public class Node
             OutputStream os = clientSocket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
             BufferedWriter bw = new BufferedWriter(osw);
-            String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
+            String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSSSS").format(new Date());
             message = timeStamp + "\t" + message;
             bw.write(message);
             bw.flush();
