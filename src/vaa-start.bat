@@ -1,4 +1,5 @@
 :: This file starts all Nodes written in the file inputTextFile.txt and once the Initiator
+@ECHO OFF
 
 :: Removes all class files
 rm *.class

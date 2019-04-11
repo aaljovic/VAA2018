@@ -13,6 +13,12 @@ public final class Constants
     // Error Messages
     public static final String FILE_NOT_FOUND_ERROR = "Datei nicht gefunden ";
     public static final String INPUT_OUTPUT_ERROR = "Fehler ";
+    public static final String INVALID_INPUT_ERROR = "Ungültige Eingabe." + " Starten Sie das Programm neu mit der gewünschten Knoten ID.";
+
+    // Message Type
+    public static final String SYSTEM_MESSAGE_TYPE = "SYSTEM";
+    public static final String ERROR_MESSAGE_TYPE = "ERROR";
+    public static final String CHAT_MESSAGE_TYPE = "CHAT";
 
     // Output
     public static final String SELECTION_MENU =

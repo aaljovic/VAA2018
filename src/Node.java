@@ -10,14 +10,14 @@ public class Node
     {
         if (args.length == 1)
         {
-            Node node = read(args[0]);
+            Node node = startNode(args[0]);
             node.setRandomNeighbours();
             node.showNeighbours();
             node.listenToPort(node.getPort());
         }
         else
         {
-            System.out.println("Ungültige Eingabe." + "\n" + "Starten Sie das Programm neu mit der gewünschten Knoten ID.");
+            showMessage(Constants.INVALID_INPUT_ERROR, Constants.ERROR_MESSAGE_TYPE);
         }
     }
 
@@ -34,6 +34,7 @@ public class Node
         this.neighbourNodes = neighbourNodes;
     }
 
+    // Reading parameters from file and returning a node
     protected static Node read(String inputParameter)
     {
         String line = "";
@@ -65,9 +66,19 @@ public class Node
         }
         String[] parts = ipAddress.split(":");
         Node node = new Node(Integer.parseInt(idInLine), parts[0], Integer.parseInt(parts[1]), null);
-        System.out.println("----> Knoten " + node.id + node.ipAddress + ":" + node.port + " <----");
         return node;
     }
+
+    // Initial start of the Node
+    protected static Node startNode(String inputParameter)
+    {
+        Node node = read(inputParameter);
+        String message = "Knoten " + node.id + " wurde gestartet auf" + node.ipAddress + ":" + node.port;
+        showMessage(message, Constants.SYSTEM_MESSAGE_TYPE);
+        return node;
+    }
+
+
 
     public static int[] getAllIds()
     {
@@ -116,17 +127,17 @@ public class Node
             server = new ServerSocket(port);
             while (run==true)
             {
-                System.out.println("\n" + "Server hört zu...");
+                showMessage("Server hort zu...", Constants.SYSTEM_MESSAGE_TYPE);
                 Socket socket = server.accept();
 
                 InputStream is = socket.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader br = new BufferedReader(isr);
                 String message = br.readLine();
-                System.out.println(message);
                 // String message includes a timestamp and the actual message. To check if the message contains the command "stop" we split it into two parts: timeStamp and actual message
                 String[] wordsOfMessage = message.split("\\s+");
                 String lastWordOfMessage = wordsOfMessage[wordsOfMessage.length-1];
+                showMessage("Nachricht erhalten: " + lastWordOfMessage, Constants.CHAT_MESSAGE_TYPE);
                 if (lastWordOfMessage.equals(Constants.STOP_MESSAGE))
                 {
                     if (server != null)
@@ -168,7 +179,7 @@ public class Node
             OutputStream os = clientSocket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
             BufferedWriter bw = new BufferedWriter(osw);
-            String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSSSS").format(new Date());
+            String timeStamp = new SimpleDateFormat("HH:mm:ss.SSSSS").format(new Date());
             message = timeStamp + "\t" + message;
             bw.write(message);
             bw.flush();
@@ -192,12 +203,13 @@ public class Node
     {
         for (int i= 0; i<this.neighbourNodes.length; i++)
         {
-            System.out.println("Nachricht an " + this.neighbourNodes[i]);
+            String message = "Nachricht an " + this.neighbourNodes[i] + " gesendet";
             this.sendMessage(this.neighbourNodes[i], Integer.toString(this.id));
+            showMessage(message, Constants.CHAT_MESSAGE_TYPE);
         }
-
     }
 
+    // sets random Neighbours for the node
     protected void setRandomNeighbours()
     {
         String line = "";
@@ -252,8 +264,14 @@ public class Node
     {
         for (int i=0; i<this.neighbourNodes.length; i++)
         {
-            System.out.println("Nachbar " + this.neighbourNodes[i]);
+            showMessage("Mein Nachbar ist Knoten " + this.neighbourNodes[i], Constants.SYSTEM_MESSAGE_TYPE);
         }
+    }
+
+    protected static void showMessage(String message, String messageType)
+    {
+        String timeStamp = new SimpleDateFormat("HH:mm:ss.SSSSS").format(new Date());
+        System.out.println(timeStamp + "\t" + messageType + "\t" + message);
     }
 
 }
