@@ -3,6 +3,9 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class Node
 {
@@ -171,7 +174,7 @@ public class Node
         }
     }
 
-    protected static void sendMessage(int id, String message)
+    protected static void sendMessage(int id, JSONObject message)
     {
         try
         {   // @TODO Maybe InetAddress.getLocalHost() instead of "127.0.0.1", or at least Constan localhost
@@ -179,9 +182,9 @@ public class Node
             OutputStream os = clientSocket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
             BufferedWriter bw = new BufferedWriter(osw);
-            String timeStamp = new SimpleDateFormat("HH:mm:ss.SSSSS").format(new Date());
-            message = timeStamp + "\t" + message;
-            bw.write(message);
+            //String timeStamp = new SimpleDateFormat("HH:mm:ss.SSSSS").format(new Date());
+            //message = timeStamp + "\t" + message;
+            bw.write(message.toString());
             bw.flush();
             clientSocket.close();
         }
@@ -203,9 +206,19 @@ public class Node
     {
         for (int i= 0; i<this.neighbourNodes.length; i++)
         {
-            String message = "Nachricht an " + this.neighbourNodes[i] + " gesendet";
-            this.sendMessage(this.neighbourNodes[i], Integer.toString(this.id));
-            showMessage(message, Constants.CHAT_MESSAGE_TYPE);
+            JSONObject message = null;
+            try
+            {
+                message = new JSONObject(Integer.toString(this.id));
+            }
+            catch(JSONException jsonE)
+            {
+                System.err.println(Constants.JSON_ERROR + jsonE);
+            }
+
+            String outputMessage = "Nachricht an " + this.neighbourNodes[i] + " gesendet";
+            this.sendMessage(this.neighbourNodes[i], message);
+            showMessage(outputMessage, Constants.CHAT_MESSAGE_TYPE);
         }
     }
 
@@ -273,5 +286,4 @@ public class Node
         String timeStamp = new SimpleDateFormat("HH:mm:ss.SSSSS").format(new Date());
         System.out.println(timeStamp + "\t" + messageType + "\t" + message);
     }
-
 }

@@ -1,4 +1,11 @@
 :: This file starts all Nodes written in the file inputTextFile.txt and once the Initiator
+@ECHO OFF
+
+:: go to src directory
+cd ../src
+
+:: set Classpath for JSON jar
+set CLASSPATH=.;D:\GitHubProjekte\VAA_WS2018_U1_A4\lib\org.json.jar
 
 :: Removes all class files
 rm *.class

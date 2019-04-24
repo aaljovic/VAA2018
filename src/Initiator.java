@@ -1,3 +1,6 @@
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Scanner;
 
 public class Initiator
@@ -41,8 +44,16 @@ public class Initiator
         Scanner sc = new Scanner(System.in);
         String id = sc.next();
         System.out.println("Wie lautet die Nachricht?");
-        String message = sc.next();
-        Node.sendMessage(Integer.parseInt(id), message);
+        JSONObject controlMessage = null;
+        try
+        {
+            controlMessage = new JSONObject(sc.next());
+        }
+        catch (JSONException jsonE)
+        {
+            System.err.println(Constants.JSON_ERROR + jsonE);
+        }
+        Node.sendMessage(Integer.parseInt(id), controlMessage);
     }
 
     private static void closeNode()
@@ -50,15 +61,33 @@ public class Initiator
         System.out.println(Constants.REQUEST_ID_INPUT);
         Scanner sc = new Scanner(System.in);
         String id = sc.next();
-        Node.sendMessage(Integer.parseInt(id), Constants.STOP_MESSAGE);
+        JSONObject controlMessage = null;
+        try
+        {
+            controlMessage = new JSONObject(Constants.STOP_MESSAGE);
+        }
+        catch (JSONException jsonE)
+        {
+            System.err.println(Constants.JSON_ERROR + jsonE);
+        }
+        Node.sendMessage(Integer.parseInt(id), controlMessage);
     }
 
     private static void closeAllNodes()
     {
         int[] allIDs = Node.getAllIds();
+        JSONObject controlMessage = null;
+        try
+        {
+            controlMessage = new JSONObject(Constants.STOP_MESSAGE);
+        }
+        catch (JSONException jsonE)
+        {
+            System.err.println(Constants.JSON_ERROR + jsonE);
+        }
         for (int i=0; i< allIDs.length; i++)
         {
-            Node.sendMessage(allIDs[i], Constants.STOP_MESSAGE);
+            Node.sendMessage(allIDs[i], controlMessage);
         }
     }
 }

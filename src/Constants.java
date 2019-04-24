@@ -11,9 +11,10 @@ public final class Constants
     public static final String FILE_NAME = "D:\\GitHubProjekte\\VAA_WS2018_U1_A1\\inputFiles\\inputTextFile";
 
     // Error Messages
-    public static final String FILE_NOT_FOUND_ERROR = "Datei nicht gefunden ";
-    public static final String INPUT_OUTPUT_ERROR = "Fehler ";
+    public static final String FILE_NOT_FOUND_ERROR = "Datei nicht gefunden: ";
+    public static final String INPUT_OUTPUT_ERROR = "Fehler: ";
     public static final String INVALID_INPUT_ERROR = "Ungültige Eingabe." + " Starten Sie das Programm neu mit der gewünschten Knoten ID.";
+    public static final String JSON_ERROR = "Fehler beim erzeugen einer JSON-Nachricht: ";
 
     // Message Type
     public static final String SYSTEM_MESSAGE_TYPE = "SYSTEM";
